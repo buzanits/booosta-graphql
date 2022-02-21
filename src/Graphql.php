@@ -23,7 +23,6 @@ class Graphql extends \booosta\webapp\Webapp
   protected $foreignkeys = [];
   protected $orderby = [];
 
-  protected $publicuser_filter = [];
   protected $user_filter = [];
 
   protected $sent_authtoken;
@@ -55,11 +54,11 @@ class Graphql extends \booosta\webapp\Webapp
 
   public function __call($name, $args)
   {
-    #debug("in $name()");
+    #b::debug("in $name()");
     $name = str_replace('exec__', '', $name);
-    #debug($args);
+    #b::debug($args);
     if(is_numeric($args[0])) $args = [['id' => $args[0], '__mode' => 'single_result']];
-    #debug($args);
+    #b::debug($args);
 
     if(in_array($name, $this->datafields)):
       $this->db_auth();
@@ -104,18 +103,19 @@ class Graphql extends \booosta\webapp\Webapp
       $orderclause = '';
     endif;
 
-    if($this->debugmode) $limit = "limit 0, 100"; else $limit = '';
-    #debug("table: $table, clause: $whereclause"); debug($vals);
-    #debug($args);
+    #b::debug("table: $table, clause: $whereclause"); b::debug($vals);
+    #b::debug($args);
     if($args[0]['__mode'] == 'single_result'):
       $result = $this->DB->query_list("select *, concat('$table-', id) as graphqlid from `$table` $whereclause", $vals);
       $result = $this->adjust_result($result, $table);
     else:
       $result = $this->DB->query_arrays("select *, concat('$table-', id) as graphqlid from `$table` $whereclause $orderclause $limit", $vals);
+      #b::debug('vals'); b::debug($vals);
+      #b::debug('result'); b::debug($result);
       foreach($result as $idx => $res) $result[$idx] = $this->adjust_result($res, $table);
     endif;
 
-    #debug('result:'); debug($result);
+    #b::debug('result:'); b::debug($result);
     return $result;
   }
 
@@ -334,12 +334,11 @@ class Graphql extends \booosta\webapp\Webapp
     $crypter = $this->makeInstance($crypterclass);
 
     $token = $crypter->encrypt($this->sent_authtoken);
-    $id = $publicuser_id = $this->DB->query_value("select id from publicuser where token=? and active='1'", $token);
-    if(!$publicuser_id) $id = $this->DB->query_value("select id from user where token=? and active='1'", $token);
+    $id = $user_id = $this->DB->query_value("select id from user where token=? and active='1'", $token);
 
     if($required && !$id) $this->auth_fail();
     $this->user_id = $id;
-    $this->user_type = $this->user_class = $publicuser_id ? 'publicuser' : 'user';
+    $this->user_type = 'user';
   }
 
   // can be overridden
