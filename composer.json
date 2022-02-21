@@ -1,0 +1,23 @@
+{
+    "name": "booosta/graphql",
+    "description": "GraphQL server component for the Booosta PHP Framework",
+    "license": "LGPL-3.0-only",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "booosta\\graphql\\": "src"
+        }
+    },
+    "authors": [
+        {
+            "name": "Peter Buzanits",
+            "email": "peter@icb.at"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=8.0.0",
+        "booosta/base": "dev-master",
+        "webonyx/graphql-php": "^14.11"
+    }
+}
