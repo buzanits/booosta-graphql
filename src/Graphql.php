@@ -131,7 +131,7 @@ class Graphql extends \booosta\webapp\Webapp
 
   protected function create__record($field, $args)
   {
-    #debug("field: $field"); debug($args);
+    #b::debug("field: $field"); b::debug($args);
     $this->prepare_edit($field, $args);
     $this->action_newdo();
     return $this->$field($this->newid);
